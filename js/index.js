@@ -86,3 +86,54 @@ const board = {
   width: boardWidth,
   height: boardHeight,
 };
+let brick = {
+    row: 1,
+    column: 2,
+    brickFinished: false,
+    brickHits: 0, //max is no of bricks * 2 'no of hits for each brick'
+    width: 60,
+    height: 20,
+    offsetLeft: 30,
+    offsetTop: 20,
+    marginTop: 40,
+  };
+  
+  function resetBricks() {
+    brick.brickFinished = false;
+    brick.brickHits = 0;
+  }
+  
+  let bricks = []; // 2d array of bricks
+  
+  //create bricks
+  function createBricks() {
+    for (let r = 0; r < brick.row; r++) {
+      bricks[r] = [];
+      for (let c = 0; c < brick.column; c++) {
+        bricks[r][c] = {
+          x: c * (brick.offsetLeft + brick.width) + brick.offsetLeft,
+          y:
+            r * (brick.offsetTop + brick.height) +
+            brick.offsetTop +
+            brick.marginTop,
+          status: 2, //  2 is unbroken brick // 1 cracked brick //0 hidden brick
+        };
+      }
+    }
+  }
+  createBricks();
+  
+  function drawBricks() {
+    for (let r = 0; r < brick.row; r++) {
+      for (let c = 0; c < brick.column; c++) {
+        let b = bricks[r][c];
+        if (b.status === 2) {
+          //unbroken brick
+          pen.drawImage(BRICK_IMG, b.x, b.y, brick.width, brick.height);
+        } else if (b.status === 1) {
+          //cracked brick
+          pen.drawImage(CRACKED_IMG, b.x, b.y, brick.width, brick.height);
+        }
+      }
+    }
+  }
