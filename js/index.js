@@ -235,3 +235,35 @@ const ball = {
       }
     }
   }
+
+ 
+function drawBoard() {
+  pen.beginPath();
+  pen.fillStyle = "#3c6e71";
+  pen.strokeStyle = "#284b63";
+  pen.lineWidth = "2";
+  pen.rect(board.x, board.y, board.width, board.height);
+  pen.fill();
+  pen.stroke();
+}
+
+function drawBoardLives(x, y) {
+  pen.beginPath();
+  pen.fillStyle = "#3c6e71";
+  pen.strokeStyle = "#284b63";
+  pen.lineWidth = "2";
+  pen.rect(x, y, 45, 10);
+  pen.fill();
+  pen.stroke();
+}
+
+function mouseHandler(e) {
+  const mouseMovement = e.clientX - canvas.offsetLeft;
+  const insideCanvas = () =>
+    mouseMovement - board.width / 2 > 0 &&
+    mouseMovement + board.width / 2 < canvas.width;
+
+  if (insideCanvas()) {
+    board.x = mouseMovement - board.width / 2;
+  }
+}
