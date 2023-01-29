@@ -267,3 +267,20 @@ function mouseHandler(e) {
     board.x = mouseMovement - board.width / 2;
   }
 }
+
+function loop() {
+  //   clearTimeout(game.timeoutId);
+  if (!game.paused) {
+    paint();
+    moveBall();
+    ballWall();
+    ballBoard();
+    // ballBrick();
+    ballBrickCollision();
+
+    //this check if the level or game is over, then break from animate()
+    if (isLevelCompleted() || isGameOver()) return;
+
+    game.requestId = requestAnimationFrame(loop);
+  }
+}
