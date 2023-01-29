@@ -137,3 +137,73 @@ let brick = {
       }
     }
   }
+
+  
+const ball = {
+    x: canvas.width / 2,
+    y: board.y - radiusBall,
+    radius: radiusBall,
+    dx: game.speed * (Math.random() * 2 - 1),
+    dy: -game.speed,
+  };
+  
+  function drawBall() {
+    pen.beginPath();
+    pen.fillStyle = "#d8b4a0";
+    pen.strokeStyle = "#d77a61";
+    pen.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+    pen.fill();
+    pen.stroke();
+    pen.closePath();
+  }
+  function resetBoard() {
+    board.x = canvas.width / 2 - boardWidth / 2;
+    board.y = canvas.height - boardHeight - boardMarginBottom;
+  }
+  
+  function resetBall() {
+    ball.x = canvas.width / 2;
+    ball.y = board.y - radiusBall;
+    ball.dx = game.speed * (Math.random() * 2 - 1);
+    ball.dy = -game.speed;
+  }
+  
+  function moveBall() {
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+  }
+  
+  function ballWall() {
+    if (ball.y - ball.radius < 0) {
+      ball.dy = -ball.dy;
+    }
+    if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
+      ball.dx = -ball.dx;
+    }
+    if (ball.y > canvas.height) {
+      game.hearts--;
+      resetBoard();
+      resetBall();
+    }
+  }
+  
+  function ballBoard() {
+    if (
+      ball.y + ball.radius >= board.y &&
+      ball.y - ball.radius <= board.y + board.height && // to differentiate between collision and ball going out
+      ball.x + ball.radius >= board.x &&
+      ball.x - ball.radius <= board.x + board.width
+    ) {
+      let collisionPoint = ball.x - (board.x + board.width / 2);
+      collisionPoint = collisionPoint / (board.width / 2); //to set values to (-1 0 1)
+      let angle = (collisionPoint * Math.PI) / 3;
+  
+      //play sound only when the ball is going down towards the paddle
+      if (ball.dy > 0) {
+        sounds.ballHitBoard.play();
+      }
+  
+      ball.dx = game.speed * Math.sin(angle);
+      ball.dy = -game.speed * Math.cos(angle);
+    }
+  }
