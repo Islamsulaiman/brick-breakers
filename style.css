@@ -13,6 +13,20 @@ body{
 
 }
 
+.btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-top: 5px;
+
+}
+
+.btn button{
+        border-radius: 20px;
+            margin-left: 5px;
+}
+
 .score{
     background-color: aquamarine;
 

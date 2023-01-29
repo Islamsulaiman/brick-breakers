@@ -33,7 +33,6 @@ pause.addEventListener("click", pauseGame);
 
 function onLoadPage(e) {
   pauseAllSounds();
-  sounds.onLoadSound.play();
 
   resetGame();
   createBricks();
@@ -48,7 +47,7 @@ function onLoadPage(e) {
 function pauseGame(e) {
   //change the value of pause back and forth
   game.paused = game.paused === false ? true : false;
-  // sounds.pauseGameSound.currentTime = 0; //like stopping the sound if any
+  pause.innerText = pause.innerText === "Resume" ? "Pause" : "Resume";
   pauseAllSounds();
   sounds.pauseGameSound.play();
   loop();
@@ -75,6 +74,7 @@ function resetGame() {
   game.requestId = null;
   game.score = 0;
   game.level = 0;
+  game.paused = false;
 }
 
 const radiusBall = 10;
@@ -87,7 +87,7 @@ const board = {
 };
 let brick = {
   row: 1,
-  column: 2,
+  column: 4,
   brickFinished: false,
   brickHits: 0, //max is no of bricks * 2 'no of hits for each brick'
   width: 60,
@@ -218,7 +218,6 @@ function ballBrickCollision() {
           ball.y - ball.radius <= b.y + brick.height
         ) {
           // if brick and ball touched
-
           ball.dy = -ball.dy;
           b.status--;
           if (b.status === 0) {
