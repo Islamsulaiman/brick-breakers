@@ -79,7 +79,6 @@ function resetGame() {
 
 const radiusBall = 10;
 
-
 const board = {
   x: canvas.width / 2 - boardWidth / 2,
   y: canvas.height - boardHeight - boardMarginBottom,
@@ -87,156 +86,154 @@ const board = {
   height: boardHeight,
 };
 let brick = {
-    row: 1,
-    column: 2,
-    brickFinished: false,
-    brickHits: 0, //max is no of bricks * 2 'no of hits for each brick'
-    width: 60,
-    height: 20,
-    offsetLeft: 30,
-    offsetTop: 20,
-    marginTop: 40,
-  };
-  
-  function resetBricks() {
-    brick.brickFinished = false;
-    brick.brickHits = 0;
-  }
-  
-  let bricks = []; // 2d array of bricks
-  
-  //create bricks
-  function createBricks() {
-    for (let r = 0; r < brick.row; r++) {
-      bricks[r] = [];
-      for (let c = 0; c < brick.column; c++) {
-        bricks[r][c] = {
-          x: c * (brick.offsetLeft + brick.width) + brick.offsetLeft,
-          y:
-            r * (brick.offsetTop + brick.height) +
-            brick.offsetTop +
-            brick.marginTop,
-          status: 2, //  2 is unbroken brick // 1 cracked brick //0 hidden brick
-        };
-      }
-    }
-  }
-  createBricks();
-  
-  function drawBricks() {
-    for (let r = 0; r < brick.row; r++) {
-      for (let c = 0; c < brick.column; c++) {
-        let b = bricks[r][c];
-        if (b.status === 2) {
-          //unbroken brick
-          pen.drawImage(BRICK_IMG, b.x, b.y, brick.width, brick.height);
-        } else if (b.status === 1) {
-          //cracked brick
-          pen.drawImage(CRACKED_IMG, b.x, b.y, brick.width, brick.height);
-        }
-      }
-    }
-  }
+  row: 1,
+  column: 2,
+  brickFinished: false,
+  brickHits: 0, //max is no of bricks * 2 'no of hits for each brick'
+  width: 60,
+  height: 20,
+  offsetLeft: 30,
+  offsetTop: 20,
+  marginTop: 40,
+};
 
-  
+function resetBricks() {
+  brick.brickFinished = false;
+  brick.brickHits = 0;
+}
+
+let bricks = []; // 2d array of bricks
+
+//create bricks
+function createBricks() {
+  for (let r = 0; r < brick.row; r++) {
+    bricks[r] = [];
+    for (let c = 0; c < brick.column; c++) {
+      bricks[r][c] = {
+        x: c * (brick.offsetLeft + brick.width) + brick.offsetLeft,
+        y:
+          r * (brick.offsetTop + brick.height) +
+          brick.offsetTop +
+          brick.marginTop,
+        status: 2, //  2 is unbroken brick // 1 cracked brick //0 hidden brick
+      };
+    }
+  }
+}
+createBricks();
+
+function drawBricks() {
+  for (let r = 0; r < brick.row; r++) {
+    for (let c = 0; c < brick.column; c++) {
+      let b = bricks[r][c];
+      if (b.status === 2) {
+        //unbroken brick
+        pen.drawImage(BRICK_IMG, b.x, b.y, brick.width, brick.height);
+      } else if (b.status === 1) {
+        //cracked brick
+        pen.drawImage(CRACKED_IMG, b.x, b.y, brick.width, brick.height);
+      }
+    }
+  }
+}
+
 const ball = {
-    x: canvas.width / 2,
-    y: board.y - radiusBall,
-    radius: radiusBall,
-    dx: game.speed * (Math.random() * 2 - 1),
-    dy: -game.speed,
-  };
-  
-  function drawBall() {
-    pen.beginPath();
-    pen.fillStyle = "#d8b4a0";
-    pen.strokeStyle = "#d77a61";
-    pen.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-    pen.fill();
-    pen.stroke();
-    pen.closePath();
+  x: canvas.width / 2,
+  y: board.y - radiusBall,
+  radius: radiusBall,
+  dx: game.speed * (Math.random() * 2 - 1),
+  dy: -game.speed,
+};
+
+function drawBall() {
+  pen.beginPath();
+  pen.fillStyle = "#d8b4a0";
+  pen.strokeStyle = "#d77a61";
+  pen.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+  pen.fill();
+  pen.stroke();
+  pen.closePath();
+}
+function resetBoard() {
+  board.x = canvas.width / 2 - boardWidth / 2;
+  board.y = canvas.height - boardHeight - boardMarginBottom;
+}
+
+function resetBall() {
+  ball.x = canvas.width / 2;
+  ball.y = board.y - radiusBall;
+  ball.dx = game.speed * (Math.random() * 2 - 1);
+  ball.dy = -game.speed;
+}
+
+function moveBall() {
+  ball.x += ball.dx;
+  ball.y += ball.dy;
+}
+
+function ballWall() {
+  if (ball.y - ball.radius < 0) {
+    ball.dy = -ball.dy;
   }
-  function resetBoard() {
-    board.x = canvas.width / 2 - boardWidth / 2;
-    board.y = canvas.height - boardHeight - boardMarginBottom;
+  if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
+    ball.dx = -ball.dx;
   }
-  
-  function resetBall() {
-    ball.x = canvas.width / 2;
-    ball.y = board.y - radiusBall;
-    ball.dx = game.speed * (Math.random() * 2 - 1);
-    ball.dy = -game.speed;
+  if (ball.y > canvas.height) {
+    game.hearts--;
+    resetBoard();
+    resetBall();
   }
-  
-  function moveBall() {
-    ball.x += ball.dx;
-    ball.y += ball.dy;
-  }
-  
-  function ballWall() {
-    if (ball.y - ball.radius < 0) {
-      ball.dy = -ball.dy;
+}
+
+function ballBoard() {
+  if (
+    ball.y + ball.radius >= board.y &&
+    ball.y - ball.radius <= board.y + board.height && // to differentiate between collision and ball going out
+    ball.x + ball.radius >= board.x &&
+    ball.x - ball.radius <= board.x + board.width
+  ) {
+    let collisionPoint = ball.x - (board.x + board.width / 2);
+    collisionPoint = collisionPoint / (board.width / 2); //to set values to (-1 0 1)
+    let angle = (collisionPoint * Math.PI) / 3;
+
+    //play sound only when the ball is going down towards the paddle
+    if (ball.dy > 0) {
+      sounds.ballHitBoard.play();
     }
-    if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
-      ball.dx = -ball.dx;
-    }
-    if (ball.y > canvas.height) {
-      game.hearts--;
-      resetBoard();
-      resetBall();
-    }
+
+    ball.dx = game.speed * Math.sin(angle);
+    ball.dy = -game.speed * Math.cos(angle);
   }
-  
-  function ballBoard() {
-    if (
-      ball.y + ball.radius >= board.y &&
-      ball.y - ball.radius <= board.y + board.height && // to differentiate between collision and ball going out
-      ball.x + ball.radius >= board.x &&
-      ball.x - ball.radius <= board.x + board.width
-    ) {
-      let collisionPoint = ball.x - (board.x + board.width / 2);
-      collisionPoint = collisionPoint / (board.width / 2); //to set values to (-1 0 1)
-      let angle = (collisionPoint * Math.PI) / 3;
-  
-      //play sound only when the ball is going down towards the paddle
-      if (ball.dy > 0) {
-        sounds.ballHitBoard.play();
-      }
-  
-      ball.dx = game.speed * Math.sin(angle);
-      ball.dy = -game.speed * Math.cos(angle);
-    }
-  }
-  function ballBrickCollision() {
-    //in update
-    for (let r = 0; r < brick.row; r++) {
-      for (let c = 0; c < brick.column; c++) {
-        let b = bricks[r][c];
-        if (b.status > 0) {
-          if (
-            ball.x + ball.radius >= b.x &&
-            ball.x - ball.radius <= b.x + brick.width &&
-            ball.y + ball.radius >= b.y &&
-            ball.y - ball.radius <= b.y + brick.height
-          ) {
-            // if brick and ball touched
-  
-            ball.dy = -ball.dy;
-            b.status--;
-            if (b.status === 0) {
-              sounds.brickCrack.play();
-            } else {
-              sounds.ballHitBrick.play();
-            }
-            brick.brickHits++;
-            game.score += game.scoreGain;
+}
+function ballBrickCollision() {
+  //in update
+  for (let r = 0; r < brick.row; r++) {
+    for (let c = 0; c < brick.column; c++) {
+      let b = bricks[r][c];
+      if (b.status > 0) {
+        if (
+          ball.x + ball.radius >= b.x &&
+          ball.x - ball.radius <= b.x + brick.width &&
+          ball.y + ball.radius >= b.y &&
+          ball.y - ball.radius <= b.y + brick.height
+        ) {
+          // if brick and ball touched
+
+          ball.dy = -ball.dy;
+          b.status--;
+          if (b.status === 0) {
+            sounds.brickCrack.play();
+          } else {
+            sounds.ballHitBrick.play();
           }
+          brick.brickHits++;
+          game.score += game.scoreGain;
         }
       }
     }
   }
+}
 
- 
 function drawBoard() {
   pen.beginPath();
   pen.fillStyle = "#3c6e71";
@@ -286,70 +283,142 @@ function loop() {
 }
 
 function paint() {
+  pen.drawImage(image, 0, 0);
+  drawBoard();
+  drawBall();
+  drawBricks();
+  drawScore();
+  drawLives();
+}
+
+function drawScore() {
+  pen.font = "24px ArcadeClassic";
+  pen.fillStyle = "rgb(59, 99, 230)";
+  //destructure score from game object
+  const { score } = game;
+  //   pen.fillText(`Level: ${level}`, 5, 23);
+  pen.fillText(`Score: ${score}`, canvas.width / 2 - 50, 23);
+}
+
+function drawLives() {
+  if (game.hearts > 2) {
+    drawBoardLives(canvas.width - 150, 9);
+  }
+  if (game.hearts > 1) {
+    drawBoardLives(canvas.width - 100, 9);
+  }
+  if (game.hearts > 0) {
+    drawBoardLives(canvas.width - 50, 9);
+  }
+  if (game.hearts === 0) {
     pen.drawImage(image, 0, 0);
-    drawBoard();
-    drawBall();
-    drawBricks();
-    drawScore();
+  }
+}
+function isGameOver() {
+  if (game.hearts === 0) {
+    //to remove the last live on screen
+    pauseAllSounds();
+    sounds.gameFinish.play();
+
     drawLives();
+    gameOver();
+    return true;
   }
-  
-  function drawScore() {
-    pen.font = "24px ArcadeClassic";
-    pen.fillStyle = "rgb(59, 99, 230)";
-    //destructure score from game object
-    const { score } = game;
-    //   pen.fillText(`Level: ${level}`, 5, 23);
-    pen.fillText(`Score: ${score}`, canvas.width / 2 - 50, 23);
+}
+
+function isLevelCompleted() {
+  let threshold = brick.row * brick.column * 2;
+
+  if (brick.brickHits === threshold) {
+    brick.brickFinished = true;
+
+    pen.drawImage(image, 0, 0);
+    initNextLevel();
+    // sounds.nextLevel.play();
+    resetBall();
+    resetBoard();
+    resetBricks();
+
+    createBricks();
+    game.timeoutId = setTimeout(() => {
+      loop();
+      sounds.nextLevel.play();
+    }, 3000);
+
+    return true;
   }
-  
-  function drawLives() {
-    if (game.hearts > 2) {
-      drawBoardLives(canvas.width - 150, 9);
-    }
-    if (game.hearts > 1) {
-      drawBoardLives(canvas.width - 100, 9);
-    }
-    if (game.hearts > 0) {
-      drawBoardLives(canvas.width - 50, 9);
-    }
-    if (game.hearts === 0) {
-      pen.drawImage(image, 0, 0);
-    }
-  }
-  function isGameOver() {
-    if (game.hearts === 0) {
-      //to remove the last live on screen
-      pauseAllSounds();
-      sounds.gameFinish.play();
-  
-      drawLives();
-      gameOver();
-      return true;
-    }
-  }
-  
-  function isLevelCompleted() {
-    let threshold = brick.row * brick.column * 2;
-  
-    if (brick.brickHits === threshold) {
-      brick.brickFinished = true;
-  
-      pen.drawImage(image, 0, 0);
-      initNextLevel();
-      // sounds.nextLevel.play();
-      resetBall();
-      resetBoard();
-      resetBricks();
-  
-      createBricks();
-      game.timeoutId = setTimeout(() => {
-        loop();
-        sounds.nextLevel.play();
-      }, 3000);
-  
-      return true;
-    }
-    return false;
-  }
-  
+  return false;
+}
+
+function initNextLevel() {
+  game.level++;
+  game.speed++;
+
+  pen.font = "50px ArcadeClassic";
+  pen.fillStyle = "yellow";
+  pen.fillText(
+    `LEVEL ${game.level}!`,
+    canvas.width / 2 - 80,
+    canvas.height / 2
+  );
+}
+
+function gameOver() {
+  pen.font = "50px Verdana";
+  pen.fillStyle = "red";
+  pen.fillText("GAME OVER", canvas.width / 2 - 125, canvas.height / 2);
+  pen.font = "20px Verdana";
+  pen.fillText(
+    `Your score ${game.score}`,
+    canvas.width / 2 - 125,
+    canvas.height / 2 + 60
+  );
+}
+
+// loop();
+
+function play() {
+  pauseAllSounds();
+  sounds.onLoadSound.play();
+  //remove time out from isLevelCompleted()
+  clearTimeout(game.timeoutId);
+  //cancelAnimationFrame should run at the start to stop the perviously loaded loops -if any- started by requestAnimationFrame() in previous games, to start fresh the game.
+  cancelAnimationFrame(game.requestId);
+
+  sounds.gameStart.play();
+
+  resetGame();
+  resetBall();
+  resetBoard();
+  createBricks();
+  //   game.sfx && sounds.breakout.play();
+  //   // Start music after starting sound ends.
+  //   setTimeout(() => game.music && sounds.music.play(), 2000);
+  loop();
+}
+
+function pauseAllSounds() {
+  sounds.ballHitBrick.currentTime = 0;
+  sounds.ballHitBrick.pause();
+
+  sounds.ballHitBoard.currentTime = 0;
+  sounds.ballHitBoard.pause();
+
+  sounds.gameStart.currentTime = 0;
+  sounds.gameStart.pause();
+
+  sounds.gameFinish.currentTime = 0;
+  sounds.gameFinish.pause();
+
+  sounds.nextLevel.currentTime = 0;
+  sounds.nextLevel.pause();
+
+  sounds.brickCrack.currentTime = 0;
+  sounds.brickCrack.pause();
+
+  sounds.pauseGameSound.currentTime = 0;
+  sounds.pauseGameSound.pause();
+
+  sounds.onLoadSound.currentTime = 0;
+  sounds.onLoadSound.pause();
+}
