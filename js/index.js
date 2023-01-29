@@ -26,6 +26,8 @@ const sounds = {
   onLoadSound: new Audio("/sounds/game_start.mp3"), //Sound Effect from pixapay
 };
 
+//event listeners
+canvas.addEventListener("mousemove", mouseHandler);
 addEventListener("DOMContentLoaded", onLoadPage);
 pause.addEventListener("click", pauseGame);
 
@@ -74,3 +76,13 @@ function resetGame() {
   game.score = 0;
   game.level = 0;
 }
+
+const radiusBall = 10;
+
+
+const board = {
+  x: canvas.width / 2 - boardWidth / 2,
+  y: canvas.height - boardHeight - boardMarginBottom,
+  width: boardWidth,
+  height: boardHeight,
+};
