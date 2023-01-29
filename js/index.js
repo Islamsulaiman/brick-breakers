@@ -317,3 +317,39 @@ function paint() {
       pen.drawImage(image, 0, 0);
     }
   }
+  function isGameOver() {
+    if (game.hearts === 0) {
+      //to remove the last live on screen
+      pauseAllSounds();
+      sounds.gameFinish.play();
+  
+      drawLives();
+      gameOver();
+      return true;
+    }
+  }
+  
+  function isLevelCompleted() {
+    let threshold = brick.row * brick.column * 2;
+  
+    if (brick.brickHits === threshold) {
+      brick.brickFinished = true;
+  
+      pen.drawImage(image, 0, 0);
+      initNextLevel();
+      // sounds.nextLevel.play();
+      resetBall();
+      resetBoard();
+      resetBricks();
+  
+      createBricks();
+      game.timeoutId = setTimeout(() => {
+        loop();
+        sounds.nextLevel.play();
+      }, 3000);
+  
+      return true;
+    }
+    return false;
+  }
+  
