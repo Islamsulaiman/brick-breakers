@@ -25,3 +25,52 @@ const sounds = {
   pauseGameSound: new Audio("/sounds/pause.mp3"), //Sound Effect from pixapay
   onLoadSound: new Audio("/sounds/game_start.mp3"), //Sound Effect from pixapay
 };
+
+addEventListener("DOMContentLoaded", onLoadPage);
+pause.addEventListener("click", pauseGame);
+
+function onLoadPage(e) {
+  pauseAllSounds();
+  sounds.onLoadSound.play();
+
+  resetGame();
+  createBricks();
+  resetBoard();
+  paint();
+
+  pen.font = "50px ArcadeClassic";
+  pen.fillStyle = "lime";
+  pen.fillText("PRESS START", canvas.width / 2 - 120, canvas.height / 2);
+}
+
+function pauseGame(e) {
+  //change the value of pause back and forth
+  game.paused = game.paused === false ? true : false;
+  // sounds.pauseGameSound.currentTime = 0; //like stopping the sound if any
+  pauseAllSounds();
+  sounds.pauseGameSound.play();
+  loop();
+}
+
+let game = {
+  //requestId is the id returned by requestAnimationFrame(), that indicates the id of it's callback func in the queue waiting for the stack
+  requestId: null,
+  hearts: 3,
+  speed: 10,
+  score: 0,
+  scoreGain: 5,
+  level: 1,
+  timeoutId: null,
+  paused: false,
+
+  music: true,
+  sfx: true,
+};
+
+function resetGame() {
+  game.speed = 10;
+  game.hearts = 3;
+  game.requestId = null;
+  game.score = 0;
+  game.level = 0;
+}
