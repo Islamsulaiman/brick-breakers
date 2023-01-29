@@ -284,3 +284,36 @@ function loop() {
     game.requestId = requestAnimationFrame(loop);
   }
 }
+
+function paint() {
+    pen.drawImage(image, 0, 0);
+    drawBoard();
+    drawBall();
+    drawBricks();
+    drawScore();
+    drawLives();
+  }
+  
+  function drawScore() {
+    pen.font = "24px ArcadeClassic";
+    pen.fillStyle = "rgb(59, 99, 230)";
+    //destructure score from game object
+    const { score } = game;
+    //   pen.fillText(`Level: ${level}`, 5, 23);
+    pen.fillText(`Score: ${score}`, canvas.width / 2 - 50, 23);
+  }
+  
+  function drawLives() {
+    if (game.hearts > 2) {
+      drawBoardLives(canvas.width - 150, 9);
+    }
+    if (game.hearts > 1) {
+      drawBoardLives(canvas.width - 100, 9);
+    }
+    if (game.hearts > 0) {
+      drawBoardLives(canvas.width - 50, 9);
+    }
+    if (game.hearts === 0) {
+      pen.drawImage(image, 0, 0);
+    }
+  }
