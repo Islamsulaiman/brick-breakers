@@ -86,8 +86,8 @@ const board = {
   height: boardHeight,
 };
 let brick = {
-  row: 1,
-  column: 2,
+  row: 4,
+  column: 3,
   brickFinished: false,
   brickHits: 0, //max is no of bricks * 2 'no of hits for each brick'
   width: 60,
@@ -107,36 +107,59 @@ let bricks = []; // 2d array of bricks
 //create bricks
 function createBricks() {
   for (let r = 0; r < brick.row; r++) {
-    bricks[r] = [];
-    for (let c = 0; c < brick.column; c++) {
-      bricks[r][c] = {
-        x: c * (brick.offsetLeft + brick.width) + brick.offsetLeft,
-        y:
-          r * (brick.offsetTop + brick.height) +
-          brick.offsetTop +
-          brick.marginTop,
-        status: 2, //  2 is unbroken brick // 1 cracked brick //0 hidden brick
-      };
-    }
+      bricks[r] = [];
+      for (let c = 0; c < brick.column; c++) {
+          if (
+              (r == 3 && c == 3) ||
+              (r == 3 && c == 8) ||
+              (r == 1 && c == 2) ||
+              (r == 2 && c == 10)
+          ) {
+              bricks[r][c] = {
+                  x: c * (brick.offsetLeft + brick.width) + brick.offsetLeft,
+                  y:
+                      r * (brick.offsetTop + brick.height) +
+                      brick.offsetTop +
+                      brick.marginTop,
+                  status: 3, //  2 is unbroken brick // 1 cracked brick //0 hidden brick // 3 is unbreakable brick
+              };
+          } else {
+              bricks[r][c] = {
+                  x: c * (brick.offsetLeft + brick.width) + brick.offsetLeft,
+                  y:
+                      r * (brick.offsetTop + brick.height) +
+                      brick.offsetTop +
+                      brick.marginTop,
+                  status: 2, //  2 is unbroken brick // 1 cracked brick //0 hidden brick
+              };
+          }
+      }
   }
 }
 createBricks();
 
 function drawBricks() {
   for (let r = 0; r < brick.row; r++) {
-    for (let c = 0; c < brick.column; c++) {
-      let b = bricks[r][c];
-      if (b.status === 2) {
-        //unbroken brick
-        pen.drawImage(BRICK_IMG, b.x, b.y, brick.width, brick.height);
-      } else if (b.status === 1) {
-        //cracked brick
-        pen.drawImage(CRACKED_IMG, b.x, b.y, brick.width, brick.height);
+      for (let c = 0; c < brick.column; c++) {
+          let b = bricks[r][c];
+          if (b.status === 3) {
+              pen.beginPath();
+              pen.fillStyle = "#6c757d";
+              pen.strokeStyle = "#ced4da";
+              pen.lineWidth = "2";
+              pen.rect(b.x, b.y, brick.width, brick.height);
+              pen.fill();
+              pen.stroke();
+          } else if (b.status === 2) {
+              //unbroken brick
+              pen.drawImage(BRICK_IMG, b.x, b.y, brick.width, brick.height);
+          } else if (b.status === 1) {
+              //cracked brick
+              pen.drawImage(CRACKED_IMG, b.x, b.y, brick.width, brick.height);
+          }
       }
-    }
   }
 }
-
 const ball = {
   x: canvas.width / 2,
   y: board.y - radiusBall,
@@ -211,31 +234,35 @@ function ballBoard() {
     ball.dy = -game.speed * Math.cos(angle);
   }
 }
+
 function ballBrickCollision() {
   //in update
   for (let r = 0; r < brick.row; r++) {
-    for (let c = 0; c < brick.column; c++) {
-      let b = bricks[r][c];
-      if (b.status > 0) {
-        if (
-          ball.x + ball.radius >= b.x &&
-          ball.x - ball.radius <= b.x + brick.width &&
-          ball.y + ball.radius >= b.y &&
-          ball.y - ball.radius <= b.y + brick.height
-        ) {
-          // if brick and ball touched
-          ball.dy = -ball.dy;
-          b.status--;
-          if (b.status === 0) {
-            sounds.brickCrack.play();
-          } else {
-            sounds.ballHitBrick.play();
+      for (let c = 0; c < brick.column; c++) {
+          let b = bricks[r][c];
+          if (b.status > 0) {
+              if (
+                  ball.x + ball.radius >= b.x &&
+                  ball.x - ball.radius <= b.x + brick.width &&
+                  ball.y + ball.radius >= b.y &&
+                  ball.y - ball.radius <= b.y + brick.height
+              ) {
+                  // if brick and ball touched
+
+                  ball.dy = -ball.dy;
+                  if (b.status <= 2) {
+                      b.status--;
+                      brick.brickHits++;
+                      game.score += game.scoreGain;
+                  }
+                  if (b.status === 0) {
+                      sounds.brickCrack.play();
+                  } else {
+                      sounds.ballHitBrick.play();
+                  }
+              }
           }
-          brick.brickHits++;
-          game.score += game.scoreGain;
-        }
       }
-    }
   }
 }
 
