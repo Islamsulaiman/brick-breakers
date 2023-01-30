@@ -75,6 +75,7 @@ function resetGame() {
   game.score = 0;
   game.level = 0;
   game.paused = false;
+  pause.innerText = "Pause";
 }
 
 const radiusBall = 10;
