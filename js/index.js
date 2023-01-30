@@ -87,7 +87,7 @@ const board = {
 };
 let brick = {
     row: 1,
-    column: 2,
+    column: 1,
     brickFinished: false,
     brickHits: 0, //max is no of bricks * 2 'no of hits for each brick'
     width: 60,
@@ -347,7 +347,7 @@ function isLevelCompleted() {
 
         createBricks();
         game.timeoutId = setTimeout(() => {
-            loop();
+            // loop();
             sounds.nextLevel.play();
         }, 3000);
 
@@ -384,6 +384,7 @@ function gameOver() {
 // loop();
 
 function play() {
+  document.removeEventListener("keydown", clickHandler);
     pauseAllSounds();
     sounds.onLoadSound.play();
     //remove time out from isLevelCompleted()
@@ -403,6 +404,13 @@ function play() {
     loop();
 }
 
+document.addEventListener("keydown", clickHandler);
+
+function clickHandler(e){
+    if(e.key === 's'){
+       play();
+    }
+}
 function pauseAllSounds() {
     sounds.ballHitBrick.currentTime = 0;
     sounds.ballHitBrick.pause();
