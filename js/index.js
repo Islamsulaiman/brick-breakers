@@ -9,6 +9,10 @@ const BRICK_IMG = new Image();
 BRICK_IMG.src = "images/Capture.PNG";
 const CRACKED_IMG = new Image();
 CRACKED_IMG.src = "images/crackedPNG.PNG";
+const heartImage = new Image();
+heartImage.src = "images/heart.png";
+const boardImage = new Image();
+boardImage.src = "images/board.png";
 
 //increment for each brick broken.
 const boardWidth = 90;
@@ -236,6 +240,16 @@ function ballBoard() {
   }
 }
 
+function drawLoot(type,x, y){
+  let imageX = x;
+  let imageY = y;
+  if(type === "heart"){
+    pen.drawImage(heartImage, imageX, imageY + 20, 20,20);
+  }else{
+    pen.drawImage(boardImage, imageX, imageY + 20, 50,50);
+  }
+
+}
 function ballBrickCollision() {
   //in update
   for (let r = 0; r < brick.row; r++) {
@@ -257,6 +271,7 @@ function ballBrickCollision() {
             game.score += game.scoreGain;
             //keep track of new score at the local storage
             updateLocalStorageScore(game.score);
+            drawLoot("board", b.x, b.y);
           }
           if (b.status === 0) {
             sounds.brickCrack.play();
