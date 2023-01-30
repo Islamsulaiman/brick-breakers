@@ -87,7 +87,7 @@ const board = {
 };
 let brick = {
   row: 1,
-  column: 4,
+  column: 2,
   brickFinished: false,
   brickHits: 0, //max is no of bricks * 2 'no of hits for each brick'
   width: 60,
@@ -173,21 +173,21 @@ function moveBall() {
 
 function ballWall() {
   if (ball.y - ball.radius < 0) {
-      ball.dy = -ball.dy;
-      ball.y = ball.radius;
+    ball.dy = -ball.dy;
+    ball.y = ball.radius;
   }
   if (ball.x - ball.radius < 0) {
-      ball.dx = -ball.dx;
-      ball.x = ball.radius;
+    ball.dx = -ball.dx;
+    ball.x = ball.radius;
   }
   if (ball.x + ball.radius * 2 > canvas.width) {
-      ball.dx = -ball.dx;
-      ball.x = canvas.width - 2 * ball.radius;
+    ball.dx = -ball.dx;
+    ball.x = canvas.width - 2 * ball.radius;
   }
   if (ball.y > canvas.height) {
-      game.hearts--;
-      resetBoard();
-      resetBall();
+    game.hearts--;
+    resetBoard();
+    resetBall();
   }
 }
 
@@ -331,10 +331,27 @@ function isGameOver() {
   }
 }
 
-function isLevelCompleted() {
-  let threshold = brick.row * brick.column * 2;
+function checkFinished() {
+  let levelFinished = true;
 
-  if (brick.brickHits === threshold) {
+  //if all bricks.status == 0 || 3 then it will return true and wont access the if condition
+  for (let r = 0; r < brick.row; r++) {
+    for (let c = 0; c < brick.column; c++) {
+      let b = bricks[r][c];
+      //b.status === 3 is for the unbreakable bricks
+      if (b.status != 0 && b.status != 3) {
+        levelFinished = false;
+        return levelFinished;
+      }
+    }
+  }
+  return levelFinished;
+}
+
+function isLevelCompleted() {
+  const threshold = checkFinished();
+
+  if (threshold) {
     brick.brickFinished = true;
 
     pen.drawImage(image, 0, 0);
@@ -383,31 +400,31 @@ function gameOver() {
 // loop();
 function play() {
   document.removeEventListener("keydown", clickHandler);
-    pauseAllSounds();
-    sounds.onLoadSound.play();
-    //remove time out from isLevelCompleted()
-    clearTimeout(game.timeoutId);
-    //cancelAnimationFrame should run at the start to stop the perviously loaded loops -if any- started by requestAnimationFrame() in previous games, to start fresh the game.
-    cancelAnimationFrame(game.requestId);
+  pauseAllSounds();
+  sounds.onLoadSound.play();
+  //remove time out from isLevelCompleted()
+  clearTimeout(game.timeoutId);
+  //cancelAnimationFrame should run at the start to stop the perviously loaded loops -if any- started by requestAnimationFrame() in previous games, to start fresh the game.
+  cancelAnimationFrame(game.requestId);
 
-    sounds.gameStart.play();
+  sounds.gameStart.play();
 
-    resetGame();
-    resetBall();
-    resetBoard();
-    createBricks();
-    //   game.sfx && sounds.breakout.play();
-    //   // Start music after starting sound ends.
-    //   setTimeout(() => game.music && sounds.music.play(), 2000);
-    loop();
+  resetGame();
+  resetBall();
+  resetBoard();
+  createBricks();
+  //   game.sfx && sounds.breakout.play();
+  //   // Start music after starting sound ends.
+  //   setTimeout(() => game.music && sounds.music.play(), 2000);
+  loop();
 }
 
 document.addEventListener("keydown", clickHandler);
 
-function clickHandler(e){
-    if(e.key === 's'){
-       play();
-    }
+function clickHandler(e) {
+  if (e.key === "s") {
+    play();
+  }
 }
 function pauseAllSounds() {
   sounds.ballHitBrick.currentTime = 0;
