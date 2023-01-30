@@ -107,57 +107,57 @@ let bricks = []; // 2d array of bricks
 //create bricks
 function createBricks() {
   for (let r = 0; r < brick.row; r++) {
-      bricks[r] = [];
-      for (let c = 0; c < brick.column; c++) {
-          if (
-              (r == 3 && c == 3) ||
-              (r == 3 && c == 8) ||
-              (r == 1 && c == 2) ||
-              (r == 2 && c == 10)
-          ) {
-              bricks[r][c] = {
-                  x: c * (brick.offsetLeft + brick.width) + brick.offsetLeft,
-                  y:
-                      r * (brick.offsetTop + brick.height) +
-                      brick.offsetTop +
-                      brick.marginTop,
-                  status: 3, //  2 is unbroken brick // 1 cracked brick //0 hidden brick // 3 is unbreakable brick
-              };
-          } else {
-              bricks[r][c] = {
-                  x: c * (brick.offsetLeft + brick.width) + brick.offsetLeft,
-                  y:
-                      r * (brick.offsetTop + brick.height) +
-                      brick.offsetTop +
-                      brick.marginTop,
-                  status: 2, //  2 is unbroken brick // 1 cracked brick //0 hidden brick
-              };
-          }
+    bricks[r] = [];
+    for (let c = 0; c < brick.column; c++) {
+      if (
+        (r == 3 && c == 3) ||
+        (r == 3 && c == 8) ||
+        (r == 1 && c == 2) ||
+        (r == 2 && c == 10)
+      ) {
+        bricks[r][c] = {
+          x: c * (brick.offsetLeft + brick.width) + brick.offsetLeft,
+          y:
+            r * (brick.offsetTop + brick.height) +
+            brick.offsetTop +
+            brick.marginTop,
+          status: 3, //  2 is unbroken brick // 1 cracked brick //0 hidden brick // 3 is unbreakable brick
+        };
+      } else {
+        bricks[r][c] = {
+          x: c * (brick.offsetLeft + brick.width) + brick.offsetLeft,
+          y:
+            r * (brick.offsetTop + brick.height) +
+            brick.offsetTop +
+            brick.marginTop,
+          status: 2, //  2 is unbroken brick // 1 cracked brick //0 hidden brick
+        };
       }
+    }
   }
 }
 createBricks();
 
 function drawBricks() {
   for (let r = 0; r < brick.row; r++) {
-      for (let c = 0; c < brick.column; c++) {
-          let b = bricks[r][c];
-          if (b.status === 3) {
-              pen.beginPath();
-              pen.fillStyle = "#6c757d";
-              pen.strokeStyle = "#ced4da";
-              pen.lineWidth = "2";
-              pen.rect(b.x, b.y, brick.width, brick.height);
-              pen.fill();
-              pen.stroke();
-          } else if (b.status === 2) {
-              //unbroken brick
-              pen.drawImage(BRICK_IMG, b.x, b.y, brick.width, brick.height);
-          } else if (b.status === 1) {
-              //cracked brick
-              pen.drawImage(CRACKED_IMG, b.x, b.y, brick.width, brick.height);
-          }
+    for (let c = 0; c < brick.column; c++) {
+      let b = bricks[r][c];
+      if (b.status === 3) {
+        pen.beginPath();
+        pen.fillStyle = "#6c757d";
+        pen.strokeStyle = "#ced4da";
+        pen.lineWidth = "2";
+        pen.rect(b.x, b.y, brick.width, brick.height);
+        pen.fill();
+        pen.stroke();
+      } else if (b.status === 2) {
+        //unbroken brick
+        pen.drawImage(BRICK_IMG, b.x, b.y, brick.width, brick.height);
+      } else if (b.status === 1) {
+        //cracked brick
+        pen.drawImage(CRACKED_IMG, b.x, b.y, brick.width, brick.height);
       }
+    }
   }
 }
 const ball = {
@@ -238,31 +238,33 @@ function ballBoard() {
 function ballBrickCollision() {
   //in update
   for (let r = 0; r < brick.row; r++) {
-      for (let c = 0; c < brick.column; c++) {
-          let b = bricks[r][c];
-          if (b.status > 0) {
-              if (
-                  ball.x + ball.radius >= b.x &&
-                  ball.x - ball.radius <= b.x + brick.width &&
-                  ball.y + ball.radius >= b.y &&
-                  ball.y - ball.radius <= b.y + brick.height
-              ) {
-                  // if brick and ball touched
+    for (let c = 0; c < brick.column; c++) {
+      let b = bricks[r][c];
+      if (b.status > 0) {
+        if (
+          ball.x + ball.radius >= b.x &&
+          ball.x - ball.radius <= b.x + brick.width &&
+          ball.y + ball.radius >= b.y &&
+          ball.y - ball.radius <= b.y + brick.height
+        ) {
+          // if brick and ball touched
 
-                  ball.dy = -ball.dy;
-                  if (b.status <= 2) {
-                      b.status--;
-                      brick.brickHits++;
-                      game.score += game.scoreGain;
-                  }
-                  if (b.status === 0) {
-                      sounds.brickCrack.play();
-                  } else {
-                      sounds.ballHitBrick.play();
-                  }
-              }
+          ball.dy = -ball.dy;
+          if (b.status <= 2) {
+            b.status--;
+            brick.brickHits++;
+            game.score += game.scoreGain;
+            //keep track of new score at the local storage
+            updateLocalStorageScore(game.score);
           }
+          if (b.status === 0) {
+            sounds.brickCrack.play();
+          } else {
+            sounds.ballHitBrick.play();
+          }
+        }
       }
+    }
   }
 }
 
@@ -413,6 +415,8 @@ function initNextLevel() {
 }
 
 function gameOver() {
+  let highestScore = getHighestScore();
+
   pen.font = "50px Verdana";
   pen.fillStyle = "red";
   pen.fillText("GAME OVER", canvas.width / 2 - 125, canvas.height / 2);
@@ -422,6 +426,20 @@ function gameOver() {
     canvas.width / 2 - 125,
     canvas.height / 2 + 60
   );
+
+  if (highestScore === 0) {
+    pen.fillText(
+      `ZERO POINTS !? you still a nobby`,
+      canvas.width / 2 - 125,
+      canvas.height / 2 + 120
+    );
+  } else {
+    pen.fillText(
+      `Highest score = ${highestScore} `,
+      canvas.width / 2 - 125,
+      canvas.height / 2 + 120
+    );
+  }
 }
 
 // loop();
@@ -453,6 +471,39 @@ function clickHandler(e) {
     play();
   }
 }
+
+function updateLocalStorageScore(newScore) {
+  let highestScore;
+  if (localStorage.getItem("highestScore") === null) {
+    //init highestScore,
+    highestScore = 0;
+  } else {
+    //get the old score to increment on
+    highestScore = JSON.parse(localStorage.getItem("highestScore"));
+  }
+  //check if newScore is greater
+  if (newScore > highestScore) {
+    highestScore = newScore;
+  }
+  //update local storage
+  localStorage.setItem("highestScore", JSON.stringify(highestScore));
+}
+
+//returns highestScore from the local storage
+function getHighestScore() {
+  let currentHighestScore;
+
+  //if no highestScore yet
+  if (localStorage.getItem("highestScore") === null) {
+    // init highestScore,
+    currentHighestScore = 0;
+  } else {
+    //get the old score to increment on
+    currentHighestScore = JSON.parse(localStorage.getItem("highestScore"));
+  }
+  return currentHighestScore;
+}
+
 function pauseAllSounds() {
   sounds.ballHitBrick.currentTime = 0;
   sounds.ballHitBrick.pause();
