@@ -173,15 +173,21 @@ function moveBall() {
 
 function ballWall() {
   if (ball.y - ball.radius < 0) {
-    ball.dy = -ball.dy;
+      ball.dy = -ball.dy;
+      ball.y = ball.radius;
   }
-  if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
-    ball.dx = -ball.dx;
+  if (ball.x - ball.radius < 0) {
+      ball.dx = -ball.dx;
+      ball.x = ball.radius;
+  }
+  if (ball.x + ball.radius * 2 > canvas.width) {
+      ball.dx = -ball.dx;
+      ball.x = canvas.width - 2 * ball.radius;
   }
   if (ball.y > canvas.height) {
-    game.hearts--;
-    resetBoard();
-    resetBall();
+      game.hearts--;
+      resetBoard();
+      resetBall();
   }
 }
 
@@ -375,27 +381,34 @@ function gameOver() {
 }
 
 // loop();
-
 function play() {
-  pauseAllSounds();
-  sounds.onLoadSound.play();
-  //remove time out from isLevelCompleted()
-  clearTimeout(game.timeoutId);
-  //cancelAnimationFrame should run at the start to stop the perviously loaded loops -if any- started by requestAnimationFrame() in previous games, to start fresh the game.
-  cancelAnimationFrame(game.requestId);
+  document.removeEventListener("keydown", clickHandler);
+    pauseAllSounds();
+    sounds.onLoadSound.play();
+    //remove time out from isLevelCompleted()
+    clearTimeout(game.timeoutId);
+    //cancelAnimationFrame should run at the start to stop the perviously loaded loops -if any- started by requestAnimationFrame() in previous games, to start fresh the game.
+    cancelAnimationFrame(game.requestId);
 
-  sounds.gameStart.play();
+    sounds.gameStart.play();
 
-  resetGame();
-  resetBall();
-  resetBoard();
-  createBricks();
-  //   game.sfx && sounds.breakout.play();
-  //   // Start music after starting sound ends.
-  //   setTimeout(() => game.music && sounds.music.play(), 2000);
-  loop();
+    resetGame();
+    resetBall();
+    resetBoard();
+    createBricks();
+    //   game.sfx && sounds.breakout.play();
+    //   // Start music after starting sound ends.
+    //   setTimeout(() => game.music && sounds.music.play(), 2000);
+    loop();
 }
 
+document.addEventListener("keydown", clickHandler);
+
+function clickHandler(e){
+    if(e.key === 's'){
+       play();
+    }
+}
 function pauseAllSounds() {
   sounds.ballHitBrick.currentTime = 0;
   sounds.ballHitBrick.pause();
