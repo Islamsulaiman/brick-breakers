@@ -68,10 +68,10 @@ let game = {
   timeoutId: null,
   paused: false,
 
-  startPrizeScore: 70,
+  startPrizeScore: 100,
   startPrizeSwitch: "false",
   incrementPrizeSwitch: "false",
-  prizeIncr: 20,
+  prizeIncr: 50,
 
   boardTimeOut: null,
 
@@ -101,8 +101,8 @@ const board = {
   height: boardHeight,
 };
 let brick = {
-  row: 1,
-  column: 3,
+  row: 4,
+  column: 13,
   brickFinished: false,
   brickHits: 0, //max is no of bricks * 2 'no of hits for each brick'
   width: 60,
@@ -370,18 +370,15 @@ function ballBrickCollision() {
 
 function lootBoard() {
   lootArray.forEach((obj) => {
-      if (
-          obj.imageY == board.y
-      ) {
-          if (obj.prize == "heart") {
-              increaseHarts();
-              lootArray.splice(lootArray.indexOf(obj),1);
-          }
-          else if(obj.prize == "board"){
-            increaseBoardWidth();
-            lootArray.splice(lootArray.indexOf(obj),1);
-          }
-        }
+    if (obj.imageY == board.y) {
+      if (obj.prize == "heart") {
+        increaseHarts();
+        lootArray.splice(lootArray.indexOf(obj), 1);
+      } else if (obj.prize == "board") {
+        increaseBoardWidth();
+        lootArray.splice(lootArray.indexOf(obj), 1);
+      }
+    }
   });
 }
 
@@ -442,10 +439,10 @@ function loop() {
     ballBoard();
     // ballBrick();
     ballBrickCollision();
+    lootBoard();
     // if (game.startPrizeSwitch) {
     //   moveLoot();
     // }
-    lootBoard();
 
     //this check if the level or game is over, then break from animate()
     if (isLevelCompleted() || isGameOver()) return;
