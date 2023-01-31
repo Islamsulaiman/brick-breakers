@@ -102,7 +102,7 @@ const board = {
 };
 let brick = {
   row: 4,
-  column: 13,
+  column: 12,
   brickFinished: false,
   brickHits: 0, //max is no of bricks * 2 'no of hits for each brick'
   width: 60,
