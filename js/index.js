@@ -445,6 +445,7 @@ function loop() {
     // if (game.startPrizeSwitch) {
     //   moveLoot();
     // }
+    lootBoard();
 
     //this check if the level or game is over, then break from animate()
     if (isLevelCompleted() || isGameOver()) return;
