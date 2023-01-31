@@ -61,17 +61,17 @@ let game = {
   //requestId is the id returned by requestAnimationFrame(), that indicates the id of it's callback func in the queue waiting for the stack
   requestId: null,
   hearts: 3,
-  speed: 5,
+  speed: 10,
   score: 0,
   scoreGain: 5,
   level: 1,
   timeoutId: null,
   paused: false,
 
-  startPrizeScore: 20,
+  startPrizeScore: 70,
   startPrizeSwitch: "false",
   incrementPrizeSwitch: "false",
-  prizeIncr: 10,
+  prizeIncr: 20,
 
   boardTimeOut: null,
 
@@ -80,7 +80,6 @@ let game = {
 };
 
 function resetGame() {
-  game.speed = 5;
   game.hearts = 3;
   game.requestId = null;
   game.score = 0;
@@ -102,7 +101,7 @@ const board = {
   height: boardHeight,
 };
 let brick = {
-  row: 4,
+  row: 1,
   column: 3,
   brickFinished: false,
   brickHits: 0, //max is no of bricks * 2 'no of hits for each brick'
@@ -392,7 +391,6 @@ function drawBoard() {
   pen.strokeStyle = "#284b63";
   pen.lineWidth = "2";
   pen.rect(board.x, board.y, board.width, board.height);
-  console.log(board.width);
   pen.fill();
   pen.stroke();
 }
@@ -482,11 +480,13 @@ function drawLives() {
     pen.drawImage(image, 0, 0);
   }
 }
+
 function isGameOver() {
   if (game.hearts === 0) {
     //to remove the last live on screen
     pauseAllSounds();
     sounds.gameFinish.play();
+    game.speed = 5;
 
     drawLives();
     gameOver();
