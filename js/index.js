@@ -263,16 +263,16 @@ function randomPrize() {
   return randomPrize;
 }
 
-function drawLoot(type) {
-  if (type === "heart") {
+function drawLoot() {
+  if(imageLoot.prize === "heart"){
     pen.drawImage(heartImage, imageLoot.imageX, imageLoot.imageY, 20, 20);
-  } else {
+  }else {
     pen.drawImage(boardImage, imageLoot.imageX, imageLoot.imageY, 50, 50);
   }
 }
 
 function moveLoot() {
-  image.imageY += game.prizeIncr;
+  imageLoot.imageY += game.prizeIncr;
 }
 
 //this func determine if it's time drop a loot or not
