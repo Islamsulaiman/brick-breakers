@@ -366,6 +366,15 @@ function ballBrickCollision() {
   }
 }
 
+function increaseHarts() {
+  //increase game.hearts
+  game.hearts++;
+}
+
+// function increaseBoardWidth() {
+
+// }
+
 function drawBoard() {
   pen.beginPath();
   pen.fillStyle = "#3c6e71";
@@ -440,6 +449,14 @@ function drawScore() {
 }
 
 function drawLives() {
+  if (game.hearts > 3) {
+    pen.font = "30px ArcadeClassic";
+    pen.fillStyle = "rgb(59, 99, 230)";
+    pen.fillText(`${game.hearts}`, canvas.width - 140, 25);
+
+    drawBoardLives(canvas.width - 100, 9);
+    return;
+  }
   if (game.hearts > 2) {
     drawBoardLives(canvas.width - 150, 9);
   }
