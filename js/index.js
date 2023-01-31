@@ -15,7 +15,7 @@ const boardImage = new Image();
 boardImage.src = "images/board.png";
 
 //increment for each brick broken.
-const boardWidth = 90;
+let boardWidth = 90;
 const boardHeight = 15;
 const boardMarginBottom = 30;
 
@@ -72,6 +72,8 @@ let game = {
   startPrizeSwitch: "false",
   incrementPrizeSwitch: "false",
   prizeIncr: 10,
+
+  boardTimeOut: null,
 
   music: true,
   sfx: true,
@@ -277,9 +279,10 @@ function drawLoot() {
 }
 
 function moveLoot() {
-  lootArray.forEach((obj, index) => {
+  lootArray.forEach((obj) => {
     if (obj.imageY + 1 > canvas.height) {
-      lootArray.splice(index, 1);
+      lootArray.splice(lootArray.indexOf(obj), 1);
+      // lootArray.splice(index, 1);
     } else {
       obj.imageY++;
     }
@@ -371,9 +374,17 @@ function increaseHarts() {
   game.hearts++;
 }
 
-// function increaseBoardWidth() {
-
-// }
+function increaseBoardWidth() {
+  //1 increase the width immediately
+  if (board.width === 90) {
+    board.width = 160;
+    //2change the width back after 5 sec
+    setTimeout(() => {
+      // change width back
+      board.width = 90;
+    }, 15000);
+  }
+}
 
 function drawBoard() {
   pen.beginPath();
@@ -381,6 +392,7 @@ function drawBoard() {
   pen.strokeStyle = "#284b63";
   pen.lineWidth = "2";
   pen.rect(board.x, board.y, board.width, board.height);
+  console.log(board.width);
   pen.fill();
   pen.stroke();
 }
@@ -503,6 +515,8 @@ function isLevelCompleted() {
   const threshold = checkFinished();
 
   if (threshold) {
+    lootArray.splice(0, lootArray.length);
+
     brick.brickFinished = true;
 
     pen.drawImage(image, 0, 0);
