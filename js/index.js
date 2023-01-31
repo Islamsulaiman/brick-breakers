@@ -368,6 +368,23 @@ function ballBrickCollision() {
   }
 }
 
+function lootBoard() {
+  lootArray.forEach((obj) => {
+      if (
+          obj.imageY == board.y
+      ) {
+          if (obj.prize == "heart") {
+              increaseHarts();
+              lootArray.splice(lootArray.indexOf(obj),1);
+          }
+          else if(obj.prize == "board"){
+            increaseBoardWidth();
+            lootArray.splice(lootArray.indexOf(obj),1);
+          }
+        }
+  });
+}
+
 function increaseHarts() {
   //increase game.hearts
   game.hearts++;
