@@ -67,6 +67,8 @@ let game = {
   level: 1,
   timeoutId: null,
   paused: false,
+  startPrizeScore: 20,
+  startPrizeSwitch: "false",
 
   music: true,
   sfx: true,
@@ -80,6 +82,7 @@ function resetGame() {
   game.level = 0;
   game.paused = false;
   pause.innerText = "Pause";
+  game.startPrizeSwitch = "false";
 }
 
 const radiusBall = 10;
@@ -240,16 +243,24 @@ function ballBoard() {
   }
 }
 
-function drawLoot(type,x, y){
+function randomPrize() {
+  let prizeOptions = ["heart", "board"];
+  let randomPrize =
+    prizeOptions[Math.floor(Math.random() * prizeOptions.length)];
+
+  return randomPrize;
+}
+
+function drawLoot(type, x, y) {
   let imageX = x;
   let imageY = y;
-  if(type === "heart"){
-    pen.drawImage(heartImage, imageX, imageY + 20, 20,20);
-  }else{
-    pen.drawImage(boardImage, imageX, imageY + 20, 50,50);
+  if (type === "heart") {
+    pen.drawImage(heartImage, imageX, imageY + 20, 20, 20);
+  } else {
+    pen.drawImage(boardImage, imageX, imageY + 20, 50, 50);
   }
-
 }
+
 function ballBrickCollision() {
   //in update
   for (let r = 0; r < brick.row; r++) {
@@ -263,7 +274,6 @@ function ballBrickCollision() {
           ball.y - ball.radius <= b.y + brick.height
         ) {
           // if brick and ball touched
-
           ball.dy = -ball.dy;
           if (b.status <= 2) {
             b.status--;
@@ -271,12 +281,31 @@ function ballBrickCollision() {
             game.score += game.scoreGain;
             //keep track of new score at the local storage
             updateLocalStorageScore(game.score);
+
+            //draw the drooped loot
             drawLoot("board", b.x, b.y);
+
+            //open switch to start give the player prizes
+            console.log(game.startPrizeSwitch);
+            if (
+              game.score > game.startPrizeScore &&
+              game.startPrizeSwitch === "false"
+            ) {
+              // ignore unbreakable brick(b.status === 3), and startPrizeSwitch is false , open the startPrizeSwitch
+              game.startPrizeSwitch = "true";
+            }
           }
+          //play sounds
           if (b.status === 0) {
             sounds.brickCrack.play();
           } else {
             sounds.ballHitBrick.play();
+          }
+
+          //check for startPrizeSwitch if true then start giving prize
+          if (game.startPrizeSwitch === "true") {
+            //try to invoke this function after fixed intervals of score increase
+            randomPrize();
           }
         }
       }
